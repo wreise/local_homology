@@ -6,8 +6,8 @@ def convert_diagram_to_relative(diag, max_dim):
     """
     relative_betti = {}
     for p in diag:
-        if p[1] <= max_dim-1:
-            dim = p[0]
+        dim = p[0]
+        if dim <= max_dim-1:
             relative_betti.update({dim + 1: relative_betti.get(dim + 1, 1)})
     return diag
 
