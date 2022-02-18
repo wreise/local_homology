@@ -103,6 +103,3 @@ def plot_one_skeleton(X, x0, alpha):
         if (i_a < n_points) & (i_b < n_points):
             plt.plot([X[i_a][0], X[i_b][0]],
                      [X[i_a][1], X[i_b][1]], c='grey', alpha=0.3)
-    ax = plt.gca()
-    plt.scatter(X[:, 0], X[:, 1])
-    ax.add_patch(plt.Circle(x0[0], alpha, fill=False))
