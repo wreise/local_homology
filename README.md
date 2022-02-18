@@ -1,17 +1,20 @@
 # Local homology
 
-Currently, two ways to calculate "local homology" are implemented:
-1. Calculate relative homology of simplicial complexes. See duality tutorial.
-2. Calculate the homology of the pair dual vs 
+Currently, two ways to calculate "local (persistent) homology" of a point cloud `X` at a point `x_0` are implemented.
+The first is akin to the alpha-filtration, while the second one is the r-filtration.
 
 ## Installation
 It is advised to start from a clean environment and install directly from gitlab:
 ```
-conda create -n my_new_env python=3.8
-conda activate my_new_env
+conda create -n localHom python=3.8
+conda activate localHom
 python -m pip install git+https://github.com/wreise/local_homology.git
 ```
 
 ## Try it out
-See tutorials
+See `Tutorial.ipynb`
 
+# TODO:
+- explain the expanding filtration drawbacks and advantages.
+- establish guarantees for the coning process -> No guarantees, we are calculating something else. Derive guarantees for that?
+- implement the true alpha-filtration.
