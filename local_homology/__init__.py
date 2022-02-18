@@ -1,3 +1,4 @@
-from .coning import build_local_complex, get_persistence
+from .alpha_filtration import compute_local_homology_alpha
+from r_filtration import compute_local_homology_r
 
-__all__ = ["build_local_complex", "get_persistence"]
+__all__ = ["compute_local_homology_alpha", "compute_local_homology_r"]
