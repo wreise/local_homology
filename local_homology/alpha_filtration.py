@@ -1,3 +1,7 @@
+# Author(s): Wojciech Reise
+#
+# Copyright (C) 2022 Inria
+
 import numpy as np
 
 from sklearn.metrics import pairwise_distances

@@ -1,3 +1,7 @@
+# Author(s): Wojciech Reise
+#
+# Copyright (C) 2022 Inria
+
 from typing import List, Tuple
 
 import gudhi.simplex_tree
@@ -44,17 +48,16 @@ def get_filtered_complex(point_cloud: np.ndarray, x0: np.ndarray, alpha: float,
     Filter by the function $x \mapsto - d(x, x_0)$ and expand until
     dimension max_dimension.
 
-    Params:
-    -------
-        point_cloud: ndarray of shape (n_points, d). The point-cloud to build
-            the complex of.
-        x0: ndarray of shape (1, d). The point at which to compute the local
-            homology.
-        alpha: positive float. Construct a Rips with 2*alpha.
-        max_dimension: int. Maximal simplex dimension.
-    Returns:
-    --------
-        St: gudhi.SimplexTree
+    :param point_cloud: the point-cloud to build the complex of.
+    :type point_cloud: ndarray of shape (n_points, d).
+    :param x0: the point at which to compute the local homology.
+    :type x0: ndarray of shape (1, d).
+    :param alpha: construct a Rips with 2*alpha.
+    :type alpha: positive float.
+    :param max_dimension: maximal simplex dimension.
+    :type alpha: int.
+
+    :returns: gudhi.SimplexTree
     """
     dist_to_x0 = np.linalg.norm(point_cloud - x0, ord=2, axis=1)
     vertex_value = -dist_to_x0
@@ -80,12 +83,9 @@ def apply_duality_ordinary_to_relative(dgm_ordinary):
     """Apply the Symmetry Corollary, transforming the ordinary diagram of $-f$
     to the relative diagram of $f$.
 
-    Params:
-    -------
-        dgm_ordinary: list of tuples (dim, (b,d)) representing a persistence diagram.
-    Returns:
-    --------
-        dgm_relative: list of tuples (dim, (b,d)) representing a persistence diagram.
+    :param dgm_ordinary: represents a persistence diagram.
+    :type dgm_ordinary: list of tuples (dim, (b,d)).
+    :returns: list of tuples (dim, (b,d)) representing a persistence diagram.
     """
     dgm_relative = [(dim + 1, (-d if np.isfinite(d) else 0, -b)) for dim, (b, d) in dgm_ordinary]
     return dgm_relative

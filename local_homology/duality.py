@@ -1,3 +1,7 @@
+# Author(s): Wojciech Reise
+#
+# Copyright (C) 2022 Inria
+
 def convert_diagram_to_relative(diag, max_dim):
     """Convert the persistence diagram using duality. Here,
     add one to the dimension.

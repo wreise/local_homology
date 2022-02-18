@@ -1,3 +1,7 @@
+# Author(s): Wojciech Reise
+#
+# Copyright (C) 2022 Inria
+
 import setuptools
 
 setuptools.setup(
@@ -6,7 +10,7 @@ setuptools.setup(
     author="WReise",
     author_email="wojciech.reise@inria.fr",
     description="Approximation of (approximations of) local homology",
-    long_description=" Bla ",
+    long_description="Approximation of (approximations of) local homology",
     url="https://github.com/wreise/local_homology",
     packages=setuptools.find_packages(),
     install_requires=["numpy>=1.19.4",
