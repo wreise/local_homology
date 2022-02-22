@@ -9,13 +9,54 @@ from sklearn.metrics import pairwise_distances
 from gudhi import RipsComplex, SimplexTree
 
 
+def distance_to_boundary(point_cloud, point, epsilon):
+    """Compute the distance between the points and to the boundary. Here, the boundary is the geometric
+    boundary of the `epsilon`-ball centered at `point`. It is equivalent to having infinitely many points
+    on that boundary in `point_cloud`."""
+    point_cloud_dist = pairwise_distances(point_cloud, metric="euclidean")
+    is_in_ball, distance_to_boundary = is_point_in_ball(point_cloud, point,
+                                                        epsilon, return_distances=True)
+
+    point_cloud_dist_local = point_cloud_dist[is_in_ball][:, is_in_ball]
+    local_boundary = distance_to_boundary[is_in_ball]
+
+    return point_cloud_dist_local, local_boundary
+
+
+def distance_to_expanding_boundary(point_cloud, point, epsilon):
+    """Compute the distance between the points and to the boundary. Here, the distance to the boundary
+    is divided by 2, as if the boundary was also expanding; the edge is added as in the Cech complex
+    when the balls intersect. The inter-point distances are left unchanged."""
+    point_cloud_dist = pairwise_distances(point_cloud, metric="euclidean")
+    is_in_ball, distance_to_boundary = is_point_in_ball(point_cloud, point,
+                                                        epsilon, return_distances=True)
+
+    point_cloud_dist_local = point_cloud_dist[is_in_ball][:, is_in_ball]
+    local_boundary = distance_to_boundary[is_in_ball]
+    local_boundary /= 2.
+
+    return point_cloud_dist_local, local_boundary
+
+
+def distance_to_point_outside_ball(point_cloud, point, epsilon):
+    """Compute the distance between the points and to the boundary. Here, the distance of a point x
+    to the boundary is realized as the minimum distance to a point y outside of B(x, epsilon)."""
+    point_cloud_dist = pairwise_distances(point_cloud, metric="euclidean")
+    is_in_ball, distance_to_boundary = is_point_in_ball(point_cloud, point,
+                                                        epsilon, return_distances=True)
+    point_cloud_dist_in_ball = point_cloud_dist[is_in_ball][:, is_in_ball]
+    point_cloud_dist_in_to_out = point_cloud_dist[is_in_ball][:, np.logical_not(is_in_ball)]
+    local_boundary = np.min(point_cloud_dist_in_to_out, axis=1, keepdims=True)
+    return point_cloud_dist_in_ball, local_boundary
+
+
 ## Coning Variant
-def compute_local_homology_alpha(point_cloud, x0, epsilon, max_dimension, expand_boundary=True):
+def compute_local_homology_alpha(point_cloud, x0, epsilon, max_dimension, distances=distance_to_point_outside_ball):
     """Compute the local homology of point_cloud at x0, with a pseudo alpha-filtration.
 
     """
     st = build_local_complex_alpha(point_cloud, x0, epsilon, max_dimension + 1,
-                                   expand_boundary=expand_boundary)
+                                   distances=distances)
     pd = get_persistence(st, max_dimension)
     return pd
 
@@ -42,7 +83,7 @@ def is_point_in_ball(point_cloud, point, epsilon, return_distances=True):
     return is_in_ball
 
 
-def build_local_complex_alpha(point_cloud, point, epsilon, max_dimension, expand_boundary=True):
+def build_local_complex_alpha(point_cloud, point, epsilon, max_dimension, distances):
     """Build a simplicial complex on vertices from
     point_cloud \cap B(point, \epsilon), along with an extra vertex
     representing the boundary.
@@ -54,19 +95,11 @@ def build_local_complex_alpha(point_cloud, point, epsilon, max_dimension, expand
     :param epsilon: size of the neighborhood to consider
     :type epsilon: float, positive
     :param max_dimension: max dimension to compute the homology of.
-    :param expand_boundary: expand boundary inwards. Equivalent to including infinitely
-        many points on the boundary.
-    :type expand_boundary: bool
+    :param distances: method to compute the distance of a point to the boundary (coning vertex).
+    :type distances: callable
     """
-    point_cloud_dist = pairwise_distances(point_cloud, metric="euclidean")
-    is_in_ball, distance_to_boundary = is_point_in_ball(point_cloud, point,
-                                                        epsilon, return_distances=True)
-    
-    point_cloud_dist_local = point_cloud_dist[is_in_ball][:, is_in_ball]
-    local_boundary = distance_to_boundary[is_in_ball]
 
-    if expand_boundary:
-        local_boundary /= 2.
+    point_cloud_dist_local, local_boundary = distances(point_cloud, point, epsilon)
 
     point_cloud_local_stared = np.concatenate([point_cloud_dist_local, local_boundary.T],
                                               axis=0)
@@ -77,7 +110,7 @@ def build_local_complex_alpha(point_cloud, point, epsilon, max_dimension, expand
     rc = RipsComplex(distance_matrix=point_cloud_local_stared)
     st = rc.create_simplex_tree(max_dimension=max_dimension)
     st.expansion(max_dimension)
-    n_points_in_ball = np.sum(is_in_ball)
+    n_points_in_ball = local_boundary.shape[-1]
     star_vertex = n_points_in_ball  # indexing starts at 0!
     st.assign_filtration([star_vertex], -1)
     return st
