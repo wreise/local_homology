@@ -15,9 +15,10 @@ After the first two steps described above, navigate to this directory and
 `python -m pip install -e .`
 
 ## Try it out
-See `Tutorial.ipynb`
+See `Tutorial.ipynb`.
+The nuances between different filtration variants are shown in `./implemented_variants.png`.
 
 # TODO:
-- explain the expanding filtration drawbacks and advantages.
-- establish guarantees for the coning process -> No guarantees, we are calculating something else. Derive guarantees for that?
-- implement the true alpha-filtration.
+- [ ] explain the expanding filtration drawbacks and advantages.
+- [ ] establish guarantees for the coning process -> No guarantees, we are calculating something else. Derive guarantees for that?
+- [ ] implement the true alpha-filtration.
