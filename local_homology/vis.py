@@ -18,6 +18,7 @@ def plot_disc(center, radius, **kwargs):
 
 
 def plot_rectangle(v, **kwargs):
+    """Plot rectangle (on the persistence diagram), with the lower right corner at v."""
     alpha = kwargs.pop("alpha", 0.2)
     ax = plt.gca()
     (_, y_max), (x_min, _) = ax.get_ylim(), ax.get_xlim()
