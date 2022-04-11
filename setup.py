@@ -17,9 +17,11 @@ setuptools.setup(
                       "scipy>=1.5.4",
                       "matplotlib>=3.3.3",
                       "gudhi>=3.3.0",
-                      "scikit-learn>=0.23.2",
+                      "scikit-learn>=1.1.dev0",
                       "jupyter",
+                      "tqdm",
                       ],
+    dependency_links=["https://pypi.anaconda.org/scipy-wheels-nightly/simple"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

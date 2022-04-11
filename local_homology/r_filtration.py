@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 
 
 def compute_local_homology_r(point_cloud: np.ndarray, x0: np.ndarray, alpha: float,
-                             max_dimension: int) -> List[Tuple]:
+                             max_dimension: int, max_r: float = None) -> List[Tuple]:
     """Calculate the local persistent homology of `point_cloud` at point `x_0`,
     with scale parameter alpha. Computed using the approximation technique
     from [1]. **Note:** the minimal dimension with non-trivial
@@ -32,7 +32,7 @@ def compute_local_homology_r(point_cloud: np.ndarray, x0: np.ndarray, alpha: flo
        Algorithms 174–192 (Society for Industrial and Applied Mathematics, 2014).
        doi:10.1137/1.9781611973402.13.
     """
-    St = get_filtered_complex(point_cloud, x0, alpha, max_dimension)
+    St = get_filtered_complex(point_cloud, x0, alpha, max_dimension, max_r)
     # For H_k, by corollary, it is H_{k-1}, so you need to build up to dim=k.
     St.extend_filtration()
 
@@ -43,7 +43,7 @@ def compute_local_homology_r(point_cloud: np.ndarray, x0: np.ndarray, alpha: flo
 
 
 def get_filtered_complex(point_cloud: np.ndarray, x0: np.ndarray, alpha: float,
-                         max_dimension: int) -> gudhi.simplex_tree.SimplexTree:
+                         max_dimension: int, max_r: float = None) -> gudhi.simplex_tree.SimplexTree:
     """Construct the VietorisRips complex from `point_cloud` with scale alpha.
     Filter by the function $x \mapsto - d(x, x_0)$ and expand until
     dimension max_dimension.
@@ -56,11 +56,16 @@ def get_filtered_complex(point_cloud: np.ndarray, x0: np.ndarray, alpha: float,
     :type alpha: positive float.
     :param max_dimension: maximal simplex dimension.
     :type alpha: int.
+    :param max_r: exclude points which are too far from x_0
+    :type max_r: float.
 
     :returns: gudhi.SimplexTree
     """
     dist_to_x0 = np.linalg.norm(point_cloud - x0, ord=2, axis=1)
     vertex_value = -dist_to_x0
+    if max_r is not None:
+        is_not_too_far = vertex_value >= - max_r
+        vertex_value, point_cloud = vertex_value[is_not_too_far], point_cloud[is_not_too_far]
     pairwise_distances = np.linalg.norm(point_cloud[None, :, :] - point_cloud[:, None, :],
                                         ord=2, axis=-1)
 

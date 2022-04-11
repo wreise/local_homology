@@ -13,7 +13,7 @@ python -m pip install git+https://github.com/wreise/local_homology.git
 One can also clone (or download this repository).
 After the first two steps described above, navigate to this directory and
 ```
-python -m pip install -e .
+python -m pip install --pre --extra-index https://pypi.anaconda.org/scipy-wheels-nightly/simple -e .
 ```
 
 ## Try it out
