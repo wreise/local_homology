@@ -8,7 +8,7 @@ It is advised to start from a clean environment and install directly from github
 ```
 conda create -n localHom python=3.8
 conda activate localHom
-python -m pip install git+https://github.com/wreise/local_homology.git
+python -m pip install --pre --extra-index https://pypi.anaconda.org/scipy-wheels-nightly/simple git+https://github.com/wreise/local_homology.git
 ```
 One can also clone (or download this repository).
 After the first two steps described above, navigate to this directory and
